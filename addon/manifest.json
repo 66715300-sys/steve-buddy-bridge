@@ -1,0 +1,27 @@
+{
+  "format_version": "2.0.0",
+  "header": {
+    "description": "Steve Buddy - Minecraft AI Companion with Entity Support",
+    "name": "Steve Buddy Addon",
+    "uuid": "steve-buddy-companion-v1",
+    "version": [1, 0, 0],
+    "min_game_engine_version": [1, 16, 0]
+  },
+  "modules": [
+    {
+      "description": "Steve Buddy Script Module",
+      "language": "javascript",
+      "type": "script",
+      "uuid": "steve-buddy-script-module",
+      "version": [1, 0, 0],
+      "entry": "scripts/steve_buddy.js"
+    },
+    {
+      "description": "Steve Buddy Behavior",
+      "type": "behavior",
+      "uuid": "steve-buddy-behavior",
+      "version": [1, 0, 0]
+    }
+  ],
+  "capabilities": ["inspector", "script_eval"]
+}

@@ -1,0 +1,257 @@
+{
+  "format_version": "1.16.0",
+  "uuid": "steve-buddy-entity-v1",
+  "min_engine_version": [1, 16, 0],
+  "molang_version": "1.8.0",
+  "render_controllers": ["controller.render.steve_buddy"],
+  "scripts": {
+    "pre_animation": [
+      "variable.time = (Math.cos(world.global_time * 3.141592653589793 / 180) + 1) * 0.5;",
+      "variable.move_speed = 0.0;"
+    ],
+    "animate": [
+      "steve_idle"
+    ]
+  },
+  "geometry": {
+    "default": "geometry.steve_buddy"
+  },
+  "textures": {
+    "default": "textures/entity/steve_buddy"
+  },
+  "spawn_egg": {
+    "base_color": "#4A90D9",
+    "pattern_color": "#8B4513"
+  },
+  "particle_effect": {
+    "default": "effects.happy_villager"
+  },
+  "material_instances": {
+    "*": {
+      "texture": "default",
+      "model": "steve_buddy"
+    }
+  },
+  "component_groups": [
+    {
+      "minecraft:ageable": {
+        "brand": "Steve Buddy",
+        "isBaby": false,
+        "growUp": {
+          "event": "minecraft:ageable_grow_up",
+          "trigger": "self"
+        }
+      }
+    },
+    {
+      "minecraft:follow_area": {
+        "radius": 8
+      }
+    }
+  ],
+  "components": {
+    "minecraft:experience_value": {
+      "value": 5
+    },
+    "minecraft:type": {
+      "is_pet": true,
+      "is_spawn_egg": true
+    },
+    "minecraft:health": {
+      "value": 20,
+      "max": 20
+    },
+    "minecraft:hurt_on_condition": {
+      "damage_per_second": 0
+    },
+    "minecraft:damage_sensor": {
+      "triggers": {
+        "cause": "all",
+        "deals_damage": false
+      }
+    },
+    "minecraft:collision_box": {
+      "width": 0.6,
+      "height": 1.8
+    },
+    "minecraft:movement": {
+      "speed": 0.25
+    },
+    "minecraft:navigation.walk": {
+      "can_path_over_water": false,
+      "avoid_water": false,
+      "avoid_damage_blocks": false
+    },
+    "minecraft:jump.static": {},
+    "minecraft:follow_range": {
+      "value": 16
+    },
+    "minecraft:leashable": {
+      "soft_distance": 2.5,
+      "hard_distance": 4.0,
+      "can_steer": true
+    },
+    "minecraft:interact": [
+      {
+        "interactions": [
+          {
+            "spawn_item": {
+              "item": "minecraft:oak_log",
+              "count": 1
+            },
+            "use_item": false,
+            "transform_to_item": "",
+            "play_sounds": "pop",
+            "cooldown": 2,
+            "consume_water_bucket": false,
+            "on_interact": [
+              {
+                "event": "steve:buddy:say_hello",
+                "target": "self"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "minecraft:physics": {},
+    "minecraft:push_tolls": {
+      "push_limit": 0.5
+    },
+    "minecraft:breathable": {
+      "total_supply": 15,
+      "suffocate_time": 0,
+      "inhale_time": 3.75,
+      "starts_suffocated": false
+    },
+    "minecraft:nameable": {
+      "always_show": true,
+      "allow_name_tag_renaming": false
+    },
+    "minecraft:rideable": {
+      "seat_count": 0,
+      "family_types": ["player"],
+      "seats": []
+    },
+    "minecraft:scale": {
+      "value": 1.0
+    },
+    "minecraft:behavior.hurt_by_target": {
+      "priority": 1
+    },
+    "minecraft:behavior.nearest_visible_target": {
+      "priority": 2,
+      "within_radius": 16.0,
+      "extra_type_conditions": [
+        {
+          "type": "minecraft:player",
+          "extra_conditions": []
+        }
+      ]
+    },
+    "minecraft:behavior.random_stroll": {
+      "priority": 3,
+      "interval": 100
+    },
+    "minecraft:behavior.look_at_player": {
+      "priority": 4,
+      "look_distance": 8.0,
+      "probability": 0.02
+    },
+    "minecraft:behavior.random_look_around": {
+      "priority": 5
+    },
+    "minecraft:behavior.mount_pathing": {
+      "priority": 6,
+      "speed_multiplier": 1.25,
+      "target_dist": 0.0,
+      "track_target": true
+    },
+    "minecraft:behavior.socialize": {
+      "priority": 7,
+      "interval": 200,
+      "social_range": 16.0
+    },
+    "minecraft:behavior.tempt": {
+      "priority": 8,
+      "speed_multiplier": 1.25,
+      "items": ["minecraft:oak_log", "minecraft:apple"]
+    },
+    "minecraft:behavior.trade_interest": {
+      "priority": 9,
+      "activity": "trade",
+      "require_all_players": false
+    },
+    "minecraft:behavior.panic": {
+      "priority": 10,
+      "speed_multiplier": 1.5
+    },
+    "minecraft:behavior.breed": {
+      "priority": 11,
+      "speed_multiplier": 1.25
+    },
+    "minecraft:behavior.follow_parent": {
+      "priority": 12,
+      "speed_multiplier": 1.1
+    },
+    "minecraft:behavior.villager_intention": {
+      "priority": 13
+    },
+    "minecraft:behavior.map_exploration": {
+      "priority": 14,
+      "speed_multiplier": 0.5,
+      "max_days": 10
+    },
+    "minecraft:water_movement": {},
+    "minecraft:swim": {},
+    "minecraft:push_through": {
+      "value": 1.0
+    },
+    "minecraft:block_interaction_trigger": {
+      "triggers": {
+        "on_break": [],
+        "on_damage": [],
+        "on_hit": []
+      }
+    },
+    "minecraft:conditional_bandwidth_optimization": {},
+    "minecraft:dynamics": {
+      "mass": 0.5,
+      "density": 2.5,
+      "friction": 0.4,
+      "gravitational_constant": 32.0
+    }
+  },
+  "events": {
+    "steve:buddy:say_hello": {
+      "randomize": [
+        {
+          "weight": 10,
+          "trigger": "say_event",
+          "data": {
+            "message": "嗨！我是史蒂夫！"
+          }
+        },
+        {
+          "weight": 5,
+          "trigger": "say_event",
+          "data": {
+            "message": "你好呀！一起冒险吗？"
+          }
+        },
+        {
+          "weight": 3,
+          "trigger": "say_event",
+          "data": {
+            "message": "我们可以一起去挖矿！"
+          }
+        }
+      ]
+    },
+    "say_event": {
+      "run_command": {
+        "command": "/tellraw @a{\"text\":\"§b史蒂夫 §r: {message}\"}"
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>史蒂夫 - Minecraft AI 伙伴</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <h1 class="logo">🟫 史蒂夫 · Minecraft AI 伙伴</h1>
+    </header>
+
+    <section class="panel">
+      <label for="groqKey">🔑 Groq API Key</label>
+      <input id="groqKey" autocomplete="off" spellcheck="false" type="password" placeholder="输入你的 Groq API Key (gsk_...)">
+
+      <button id="create" type="button">🎮 创建连接</button>
+
+      <div id="result" class="result hidden">
+        <p>📋 在 Minecraft 世界中运行此命令：</p>
+        <code id="command"></code>
+        <button id="copy" type="button">📋 复制命令</button>
+        <p class="hint">💡 提示：需要开启作弊模式才能使用 /connect 命令</p>
+      </div>
+
+      <p id="status" class="status"></p>
+    </section>
+
+    <section class="info">
+      <h2>📖 使用说明</h2>
+      <ul>
+        <li>1️⃣ 在 <a href="https://console.groq.com/keys" target="_blank">Groq 控制台</a> 获取免费 API Key</li>
+        <li>2️⃣ 粘贴到你的 Key 框，点击"创建连接"</li>
+        <li>3️⃣ 在 Minecraft Bedrock 中开启 Cheats，创建或加载世界</li>
+        <li>4️⃣ 按 T 打开聊天，粘贴命令并按回车</li>
+        <li>5️⃣ 开始和史蒂夫对话吧！</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
