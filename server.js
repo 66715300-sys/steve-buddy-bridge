@@ -10,7 +10,7 @@ import { WebSocketServer } from "ws";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 8080);
-const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const DEFAULT_MODEL = process.env.GROQ_MODEL || "deepseek-chat";
 const SESSION_TTL_MS = Number(process.env.SESSION_TTL_MS || 24 * 60 * 60 * 1000);
 const PLAYER_COOLDOWN_MS = Number(process.env.PLAYER_COOLDOWN_MS || 2000);
 const MAX_ACTIVE_PER_SESSION = Number(process.env.MAX_ACTIVE_PER_SESSION || 2);
@@ -47,7 +47,7 @@ function readSessionToken(token) {
     decipher.setAuthTag(raw.subarray(12, 28));
     const payload = Buffer.concat([decipher.update(raw.subarray(28)), decipher.final()]);
     const data = JSON.parse(payload.toString("utf8"));
-    if (!/^gsk_[A-Za-z0-9_-]{20,}$/.test(data.apiKey)) return null;
+    if (!/^sk-[A-Za-z0-9_-]{20,}$/.test(data.apiKey)) return null;
     if (!Number.isFinite(data.createdAt) || Date.now() - data.createdAt > SESSION_TTL_MS) return null;
     return data;
   } catch {
@@ -269,7 +269,7 @@ async function generateSummary(session, player, history) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 10_000);
     
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const res = await fetch("https://api.deepseek.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -331,7 +331,7 @@ function systemPrompt(player) {
   ].join("\n");
 }
 
-async function groqDecision(session, player, message) {
+async function aiDecision(session, player, message) {
   const history = historyFor(session, player);
   
   // 检查是否需要生成总结
@@ -368,7 +368,7 @@ async function groqDecision(session, player, message) {
   const timer = setTimeout(() => controller.abort(), 14_000);
   
   try {
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const res = await fetch("https://api.deepseek.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -379,7 +379,7 @@ async function groqDecision(session, player, message) {
     });
     const raw = await res.text();
     if (!res.ok) {
-      console.warn(`Groq ${res.status}: ${raw.slice(0, 180)}`);
+      console.warn(`DeepSeek ${res.status}: ${raw.slice(0, 180)}`);
       return { reply: "我的思绪有点卡顿，再试一次吧！", actions: [] };
     }
     const groqJson = JSON.parse(raw);
@@ -391,7 +391,7 @@ async function groqDecision(session, player, message) {
     if (reply) remember(session, player, "assistant", reply);
     return { reply, actions };
   } catch (err) {
-    console.warn("Groq failed:", String(err));
+    console.warn("DeepSeek failed:", String(err));
     return { reply: "信号不太好，请再试一次！", actions: [] };
   } finally {
     clearTimeout(timer);
@@ -497,7 +497,7 @@ async function processJob(session, ws, packet) {
   if (now - last < PLAYER_COOLDOWN_MS) return;
   session.cooldowns.set(key, now);
 
-  const decision = await groqDecision(session, player, message);
+  const decision = await aiDecision(session, player, message);
   sendDecision(ws, player, decision);
 }
 
@@ -531,9 +531,9 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === "POST" && url.pathname === "/api/session") {
       const body = JSON.parse(await readBody(req) || "{}");
-      const apiKey = String(body.groqApiKey || "").trim();
+      const apiKey = String(body.apiKey || "").trim();
       const model = String(body.model || DEFAULT_MODEL).trim();
-      if (!/^gsk_[A-Za-z0-9_\-]{20,}$/.test(apiKey)) return json(res, 400, { ok: false, error: "invalid_groq_key" });
+      if (!/^sk-[A-Za-z0-9_\-]{20,}$/.test(apiKey)) return json(res, 400, { ok: false, error: "invalid_api_key" });
       const session = createSession(apiKey, model);
       return json(res, 200, { ok: true, sessionId: session.id, connectUrl: wsUrl(req, session.id), command: `/connect ${wsUrl(req, session.id)}`, expiresInMs: SESSION_TTL_MS });
     }

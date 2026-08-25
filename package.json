@@ -1,15 +1,17 @@
 {
   "name": "steve-buddy-bridge",
   "version": "1.0.0",
-  "description": "Minecraft Bedrock AI 伙伴 - 史蒂夫版本（支持对话 + 实体跟随）",
+  "description": "Minecraft Bedrock AI 伙伴 - 史蒂夫版本（DeepSeek 集成）",
   "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "build": "bash build_addon.sh"
+    "build": "bash build_addon.sh",
+    "docker:build": "docker build -t steve-buddy .",
+    "docker:run": "docker run -p 8080:8080 --env-file .env steve-buddy"
   },
-  "keywords": ["minecraft", "bedrock", "ai", "chatbot", "companion"],
+  "keywords": ["minecraft", "bedrock", "ai", "chatbot", "deepseek"],
   "license": "MIT",
   "dependencies": {
     "ws": "^8.16.0"

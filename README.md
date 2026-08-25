@@ -1,238 +1,124 @@
-# Steve Buddy Bridge - Minecraft Bedrock AI 伙伴 🟫
+# 🟫 Steve Buddy Bridge - Minecraft AI 伙伴
 
-> 完整版：支持**对话 + 实体跟随 + 建造**，专为 Minecraft 手机版设计
+基于 DeepSeek API 的 Minecraft Bedrock AI 伙伴桥接系统，支持对话 + 实体跟随。
 
-## 🎮 项目简介
+## ✨ 功能特点
 
-这是一个 **Minecraft Bedrock（国际版）AI 伙伴系统**，包含：
-
-1. **Bridge 服务端** - WebSocket 桥接，连接游戏和 AI
-2. **Bedrock Addon** - 实体跟随、对话气泡
-3. **中文优化** - 全中文界面，中文对话
-
-### ✨ 核心特性
-
-- ✅ **自然对话** - Groq API (Llama 3.1 8B)，智能回复
-- ✅ **实体跟随** - 自定义 Steve 实体跟随玩家
-- ✅ **动作响应** - 建造、挖矿、跟随等指令
-- ✅ **记忆系统** - 20轮对话自动总结，节省 Token
-- ✅ **手机版适配** - 通过 `/connect` 命令连接
-
-### 🔧 技术栈
-
-- **后端**：Node.js 18+ + WebSocket
-- **AI**：Groq API (免费 1M tokens/分钟)
-- **协议**：bedrock-protocol (支持 1.16-1.26)
-- **部署**：Railway / Render（云平台）
-
----
+- **实时对话**：通过 WebSocket 连接游戏与 DeepSeek AI
+- **记忆总结**：20 轮对话自动触发 AI 总结，节省 Token
+- **实体跟随**：Bedrock Addon 实现跟随逻辑
+- **全中文界面**：友好的中文前端
+- **免费额度**：DeepSeek 提供充足免费额度
 
 ## 🚀 快速开始
 
-### 第一步：获取 Groq API Key
+### 1. 获取 DeepSeek API Key
 
-1. 访问 https://console.groq.com/keys
-2. 注册/登录账号
-3. 点击 "Create API Key"
-4. 复制生成的 Key（以 `gsk_` 开头）
+访问 https://platform.deepseek.com/api_keys 注册并创建 Key
 
-> 💡 **免费额度**：新用户 1M tokens/分钟，足够日常使用
+### 2. 部署服务
 
-### 第二步：部署 Bridge 服务
-
-#### 方法 A：Railway（推荐，最简单）
-
+#### 方式一：本地运行
 ```bash
-# 1. Fork 此仓库到你的 GitHub
-git init
-git add .
-git commit -m "Initial commit"
-git push origin main
-
-# 2. 在 Railway 部署
-# 访问 https://railway.app
-# → New Project → Deploy from GitHub repo
-# → 选择你的仓库
-# → 自动部署
-```
-
-**或者手动部署：**
-
-```bash
-# 克隆仓库
-git clone https://github.com/your-username/steve-buddy-bridge.git
+git clone https://github.com/66715300-sys/steve-buddy-bridge.git
 cd steve-buddy-bridge
-
-# 安装依赖
 npm install
-
-# 设置环境变量
-export GROQ_API_KEY=gsk_your_key_here
-export PORT=8080
-
-# 启动服务
+export DEEPSEEK_API_KEY=sk-your-key-here
 npm start
 ```
 
-#### 方法 B：本地运行
-
+#### 方式二：Docker 部署
 ```bash
-npm install
-export GROQ_API_KEY=gsk_your_key_here
-npm start
+docker-compose up -d
 ```
 
-### 第三步：导入 Addon
+#### 方式三：Railway 部署（推荐）
+1. Fork 本仓库
+2. 在 Railway 导入 GitHub 仓库
+3. 配置环境变量 `DEEPSEEK_API_KEY`
+4. 自动部署
 
-1. 运行打包脚本：
-```bash
-bash build_addon.sh
-```
+### 3. 游戏内使用
 
-2. 会生成两个文件：
-   - `dist/Steve_Buddy_Behavior.mcpack`
-   - `dist/Steve_Buddy_Resource.mcpack`
+1. 导入 Bedrock Addon（两个 .mcpack 文件）
+2. 开启作弊模式，加载世界
+3. 生成实体：`/summon steve:buddy ~ ~ ~`
+4. 连接 Bridge：`/connect wss://你的域名/ws/SESSION_ID`
 
-3. 在 Minecraft Bedrock 中：
-   - 设置 → 资源包 → 我的资源包 → 导入
-   - 选择 `.mcpack` 文件
-   - 启用资源包和行为包
-
-### 第四步：游戏内连接
-
-1. 创建/加载世界，**开启"允许作弊"**
-2. 按 **T** 打开聊天框
-3. 输入命令召唤实体：
-   ```
-   /summon steve:buddy
-   ```
-4. 在网页上获取连接命令，粘贴运行：
-   ```
-   /connect wss://你的域名/ws/SESSION_ID
-   ```
-5. 开始和史蒂夫对话！
-
----
-
-## 💬 对话示例
-
-### 邀请挖矿
-**你**：史蒂夫，陪我挖矿吧！
-**史蒂夫**：好呀！带上铁镐，我们去找钻石！✨
-
-### 请求建造
-**你**：帮我造个房子
-**史蒂夫**：没问题！先给我一些木头吧。
-
-### 跟随
-**你**：跟着我
-**史蒂夫**：好嘞！我跟着你走~
-
----
-
-## 🎯 支持的指令
-
-通过对话触发（自动识别）：
-
-| 指令 | 触发词 | 效果 |
-|------|--------|------|
-| 跟随 | 跟着我/过来/跟随 | Steve 跟随玩家 |
-| 建造 | 造房子/建房子 | 尝试建造 |
-| 挖矿 | 挖矿/找钻石 | 尝试挖矿 |
-| 停止 | 停下/别跟了 | 停止跟随 |
-
----
-
-## 🧠 记忆系统
-
-- **前 20 轮**：完整对话历史
-- **第 21 轮**：自动生成对话总结
-- **后续**：使用总结作为记忆，节省 Token
-
-总结内容示例：
-> 【对话记忆】玩家说要找钻石，史蒂夫陪玩家去挖矿，玩家有铁镐和食物...
-
----
-
-## 📦 项目结构
+## 📁 项目结构
 
 ```
 steve-buddy-bridge/
 ├── server.js              # Bridge 服务端（核心）
-├── package.json
-├── README.md
-├── build_addon.sh         # Addon 打包脚本
-├── public/
-│   ├── index.html         # 中文界面
+├── public/                # 前端页面
+│   ├── index.html
 │   ├── app.js
 │   └── style.css
-└── addon/                 # Bedrock Addon
-    ├── manifest.json
-    ├── entities/
-    │   └── steve_buddy.json
-    ├── scripts/
-    │   └── steve_buddy.js
-    ├── behavior_packs/
-    └── resource_packs/
+├── addon/                 # Bedrock Addon 源码
+│   ├── manifest.json
+│   ├── entities/
+│   └── scripts/
+├── dist/                  # 打包产物（.mcpack）
+├── package.json
+├── Dockerfile
+└── docker-compose.yml
 ```
 
----
+## 🔧 配置说明
 
-## 🔒 安全说明
+### 环境变量
 
-- 每个用户独立 Session，互不干扰
-- API Key 加密存储，不暴露给其他用户
-- 支持 CORS 限制
-- 建议不要分享 `/connect` 命令链接
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `DEEPSEEK_API_KEY` | DeepSeek API Key | - |
+| `DEEPSEEK_MODEL` | 模型名称 | `deepseek-chat` |
+| `PORT` | 端口号 | `8080` |
+| `SESSION_TTL_HOURS` | 会话过期时间 | `24` |
 
----
+### API Key 格式
 
-## ⚠️ 已知限制
+DeepSeek API Key 格式：`sk-xxxxxxxxxxxxxxxxxxxxxxxx`
 
-1. **手机端需要互联网** - Railway 提供公网地址
-2. **需要 Cheats** - 游戏内需开启作弊模式
-3. **实体外观** - 使用基础 Steve 模型（可自定义皮肤）
-4. **语言** - 主要支持中文，偶尔识别英文指令
+## ⚠️ 注意事项
 
----
+1. **版本兼容性**：Bedrock Script API 需要 1.16+ 版本
+2. **网络要求**：需要互联网连接访问 DeepSeek API
+3. **作弊模式**：游戏内需要开启"允许作弊"才能使用 `/connect` 命令
+4. **免费额度**：DeepSeek 提供充足的免费额度用于测试
 
-## 🔄 升级指南
+## 🐛 故障排查
 
-### 更新 Bridge 服务端
-
+### 问题：服务器无法启动
 ```bash
-git pull
+# 检查 Node.js 版本
+node --version  # 需要 >= 18
+
+# 重新安装依赖
+rm -rf node_modules
 npm install
-npm start
 ```
 
-### 更新 Addon
+### 问题：游戏内无法连接
+- 确认 Bridge 地址正确（https 开头）
+- 检查网络连接
+- 确认游戏内已开启作弊模式
 
-```bash
-bash build_addon.sh
-# 重新导入 .mcpack 文件
-```
+### 问题：API 调用失败
+- 检查 API Key 是否正确
+- 确认 DeepSeek 账户余额
+- 查看服务器日志
 
----
+## 📝 技术栈
+
+- **后端**：Node.js + WebSocket
+- **AI**：DeepSeek API
+- **Bedrock**：Script API v1.15+
+- **前端**：原生 HTML/CSS/JS
 
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
----
-
-## 📄 License
+## 📄 许可证
 
 MIT License
-
----
-
-## 🙏 致谢
-
-- 原版 Verity Improved Bridge: https://github.com/boltymcoficial-dotcom/verity-improved-bridge
-- bedrock-protocol: https://github.com/PrismarineJS/bedrock-protocol
-- Groq AI: https://groq.com
-
----
-
-祝你和史蒂夫玩得开心！🎮
