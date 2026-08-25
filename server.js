@@ -430,7 +430,7 @@ function sendDecision(ws, player, decision) {
   }).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
   
   // 发送 scriptevent 给实体
-  command(ws, `scriptevent pntmc:verity_bridge "${payload}"`);
+  command(ws, `scriptevent steve:buddy "${payload}"`);
   executeActions(ws, decision.actions, player);
 }
 

@@ -10,11 +10,11 @@ function setStatus(message, kind = "") {
 
 document.querySelector("#create").addEventListener("click", async () => {
   const groqApiKey = groqKeyInput.value.trim();
-  const model = "llama-3.1-8b-instant";
+  const model = "deepseek-chat";
   result.classList.add("hidden");
   
-  if (!groqApiKey.startsWith("gsk_")) {
-    setStatus("❌ API Key 必须以 gsk_ 开头", "error");
+  if (!groqApiKey.startsWith("sk-") && !groqApiKey.startsWith("gsk_")) {
+    setStatus("❌ API Key 格式错误，必须以 sk- 或 gsk_ 开头", "error");
     return;
   }
   
@@ -23,7 +23,7 @@ document.querySelector("#create").addEventListener("click", async () => {
     const res = await fetch("/api/session", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ groqApiKey, model }),
+      body: JSON.stringify({ apiKey: groqApiKey, model }),
     });
     const data = await res.json();
     if (!res.ok || !data.ok) throw new Error(data.error || "创建失败");
